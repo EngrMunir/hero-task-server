@@ -31,6 +31,11 @@ async function run() {
     const userCollection = client.db('taskHero').collection('users');
     const productsCollection = client.db('taskHero').collection('products');
 
+    // product related api
+    app.get('/products',async(req,res)=>{
+        const result = await productsCollection.find().toArray();
+        res.send(result);
+    })
     // user related api
     app.post('/users', async(req, res)=>{
         const user = req.body;
