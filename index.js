@@ -36,6 +36,12 @@ async function run() {
         const result = await productsCollection.find().toArray();
         res.send(result);
     })
+
+    app.get('/productCount',async(req,res)=>{
+      const count = await productsCollection.estimatedDocumentCount();
+      console.log(count)
+      res.send({count})
+    })
     // user related api
     app.post('/users', async(req, res)=>{
         const user = req.body;
