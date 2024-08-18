@@ -36,11 +36,24 @@ async function run() {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
       const searchQuery = req.query.search ||'';
-      console.log(searchQuery)
+      const sort = req.query.sort || '';
 
       const query = searchQuery ? { productName: { $regex: searchQuery, $options: 'i' } } : {};
+
+       // Determine the sorting order based on the `sort` parameter
+        let sortOption = {};
+        if (sort === 'price-asc') {
+          sortOption = { price: 1 };
+        } else if (sort === 'price-desc') {
+          sortOption = { price: -1 };
+        } else if (sort === 'date-desc') {
+          sortOption = { createdAt: -1 };
+        } else {
+          sortOption = { createdAt: 1 }; // Default sorting
+        }
       
       const result = await productsCollection.find(query)
+      .sort(sortOption)
       .skip(page*size)
       .limit(size)
       .toArray();
