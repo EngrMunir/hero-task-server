@@ -37,9 +37,18 @@ async function run() {
       const size = parseInt(req.query.size);
       const searchQuery = req.query.search ||'';
       const sort = req.query.sort || '';
+      const brand = req.query.brand || '';
+      const category = req.query.category || '';
+      const minPrice = parseFloat(req.query.minPrice) || 0;
+      const maxPrice = parseFloat(req.query.maxPrice) || 10000;
 
-      const query = searchQuery ? { productName: { $regex: searchQuery, $options: 'i' } } : {};
 
+      const query = {
+        productName: { $regex: searchQuery, $options: 'i' },
+        ...(brand && { brand }),
+        ...(category && { category }),
+        price: { $gte: minPrice, $lte: maxPrice }
+    };
        // Determine the sorting order based on the `sort` parameter
         let sortOption = {};
         if (sort === 'price-asc') {
