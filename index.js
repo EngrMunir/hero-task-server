@@ -33,8 +33,18 @@ async function run() {
 
     // product related api
     app.get('/products',async(req,res)=>{
-        const result = await productsCollection.find().toArray();
-        res.send(result);
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      const searchQuery = req.query.search ||'';
+      console.log(searchQuery)
+
+      const query = searchQuery ? { productName: { $regex: searchQuery, $options: 'i' } } : {};
+      
+      const result = await productsCollection.find(query)
+      .skip(page*size)
+      .limit(size)
+      .toArray();
+      res.send(result);
     })
 
     app.get('/productCount',async(req,res)=>{
